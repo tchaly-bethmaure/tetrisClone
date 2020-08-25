@@ -6,7 +6,7 @@ class Square:
         self.spinOrigin = spinOrigin # 1 for yes, 0 for no
 
     def fall(self):
-        self.coordx += 1
+        self.coordy += 1
 
     def draw(self, screen):
         pass

@@ -59,7 +59,6 @@ class Piece:
         self.id = id
         self.coordx = 0
         self.coordy = 0
-        self.currentControl = 1
         self.squares = [] # list Square with coord associated for making the piece
         self.nextRotationVecForPiece = self.vecRotation[self.id]
         if id == 1: # line

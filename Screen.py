@@ -7,6 +7,7 @@ class Screen:
         self.largeur = 10
         self.hauteur = 20
         self.pieces = []
+        self.current_piece = None
 
     def reinitGrid(self):
         self.grid = []
@@ -35,15 +36,14 @@ class Screen:
         p = Piece(random.randint(1,7))
         p.move((4,4))
         self.pieces.append(p)
+        self.current_piece = p
         return p
 
-    def spawnPieceWithId(self, id):
-        p = Piece(id)
-        p.move((4,4))
-        self.pieces.append(p)
-        return p
+    #for debug : def spawnPieceWithId(self, id):
+    #    p = Piece(id)
+    #    p.move((4,4))
+    #    self.pieces.append(p)
+    #    return p
 
     def makePieceFall(self):
-        for piece in self.pieces:
-            if piece.currentControl == 1:
-                piece.fall()
+        self.current_piece.fall()
