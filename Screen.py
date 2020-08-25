@@ -4,23 +4,20 @@ import random
 class Screen:
     def __init__(self):
         self.grid = []
-        self.largeur = 12
-        self.hauteur = 40
+        self.largeur = 10
+        self.hauteur = 20
         self.pieces = []
+
+    def reinitGrid(self):
+        self.grid = []
         for ligne in range(0,self.hauteur):
             cases = []
             for case in range(0,self.largeur):
-                cases.append('')
+                cases.append(' ')
             self.grid.append(cases)
 
     def draw(self):
-        x, y = 0, 0
-        for ligne in self.grid:
-            for case in ligne:
-                self.grid[y][x] = ' '
-                x += 1
-            x = 0
-            y += 1
+        self.reinitGrid()
         for piece in self.pieces:
             for square in piece.squares:
                 self.grid[square.coordx][square.coordy] = square.ico
@@ -30,17 +27,19 @@ class Screen:
             for case in ligne:
                 dessin += case
             dessin += "\n"
-
+        for x in range(0, self.largeur):
+            dessin += "§"
         print(dessin)
-        print("------")
 
     def spawnPiece(self):
         p = Piece(random.randint(1,7))
+        p.move((4,4))
         self.pieces.append(p)
         return p
 
     def spawnPieceWithId(self, id):
         p = Piece(id)
+        p.move((4,4))
         self.pieces.append(p)
         return p
 

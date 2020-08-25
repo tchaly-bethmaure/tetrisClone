@@ -12,11 +12,56 @@ import math
 
 class Piece:
     def __init__(self, id):
+        self.vecRotation = {
+            1:[
+                (0,0),
+                (1,-1),
+                (2,-2),
+                (3,-3)
+            ],
+            2:[
+                (2,0),
+                (1,-1),
+                (0,0),
+                (-1,-1)
+            ],
+            3:[
+                (1,1),
+                (0,0),
+                (1,-1),
+                (0,-2)
+            ],
+            4:[
+                (-1,3),
+                (0,2),
+                (1,1),
+                (0,0)
+            ],
+            5:[
+                (-3,1),
+                (-2,0),
+                (-1,-1),
+                (0,0)
+            ],
+            6:[
+                (-1,1),
+                (-2,0),
+                (-1,-1),
+                (0,0)
+            ],
+            7:[
+                (-1,1),
+                (1,1),
+                (0,0),
+                (-1,-1)
+            ]
+        }
         self.id = id
         self.coordx = 0
         self.coordy = 0
         self.currentControl = 1
         self.squares = [] # list Square with coord associated for making the piece
+        self.nextRotationVecForPiece = self.vecRotation[self.id]
         if id == 1: # line
             self.squares.append(Square(0,0,1))
             self.squares.append(Square(0,1,0))
@@ -52,47 +97,30 @@ class Piece:
             self.squares.append(Square(0,1,0))
             self.squares.append(Square(1,1,1))
             self.squares.append(Square(2,1,0))
+
     def fall(self):
         for square in self.squares:
             square.fall()
-    def rotate(self, origin, point, angle):
-        """
-        Rotate a point counterclockwise by a given angle around a given origin.
 
-        The angle should be given in radians.
-        """
-        ox, oy = origin
-        px, py = point
+    def rotate(self):
+        if self.id not in [6]:
+            i = 0
+            for square in self.squares:
+                square.coordx += self.vecRotation[self.id][i][0]
+                square.coordy += self.vecRotation[self.id][i][1]
+                i += 1
+            #We update the rotation vector for next rotation
+            i=0
+            for coord in self.nextRotationVecForPiece:
+                coordx = coord[0]
+                coordy = coord[1]
+                self.nextRotationVecForPiece[i] = (coordy, -1*coordx)
+                i += 1
 
-        qx = ox + math.cos(angle) * (px - ox) - math.sin(angle) * (py - oy)
-        qy = oy + math.sin(angle) * (px - ox) + math.cos(angle) * (py - oy)
-        return qx, qy
-
-    def spin(self, direction):
-        sOrigin = None
-        origin = (0, 0)
-        if direction == 1: # right
-            for square in self.squares:
-                if square.spinOrigin == 1:
-                    sOrigin = square
-                    origin = (sOrigin.coordx, sOrigin.coordy)
-                    print("Origine : "+str(origin))
-            for square in self.squares:
-                if square != sOrigin:
-                    point = (square.coordx, square.coordy)
-                    print("Point a transformer : "+str(point))
-                    newPoint = self.rotate(origin, point, math.radians(90))
-                    square.coordx = int(newPoint[0])
-                    square.coordy = int(newPoint[1])
-                    print("Point transforme : "+str((square.coordx, square.coordy)))
-        else: # left
-            for square in self.squares:
-                square.coordx = 0
-                square.coordy = 0
     def move(self, vector):
         for square in self.squares:
-            square.coordx += vector.x
-            square.coordy += vector.y
+            square.coordx += vector[0]
+            square.coordy += vector[1]
 
     def deleteSquare(self, coordx, coordy):
         i = 0
