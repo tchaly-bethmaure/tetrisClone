@@ -37,7 +37,6 @@ class Screen:
         p.move((4,4))
         self.pieces.append(p)
         self.current_piece = p
-        return p
 
     #for debug : def spawnPieceWithId(self, id):
     #    p = Piece(id)

@@ -13,7 +13,7 @@ def on_event(pygame, running, screen_model):
         if event.type == pygame.QUIT:
             # change the value to False, to exit the main loop
             running = False
-        elif event.type == pygame.KEYUP or event.type == pygame.KEYDOWN:
+        elif event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT:
                 screen_model.current_piece.move((-1,0))
             elif event.key == pygame.K_RIGHT:
@@ -28,16 +28,17 @@ def on_loop(pygame, screen_model):
             for square in piece.squares:
                 for current_square in screen_model.current_piece.squares:
                     if current_square.coordy +1 == square.coordy and current_square.coordx == square.coordx:
-                        screen_model.spawnPiece()
                         collision = True # yes
     # Current controlled piece touch the ground
     for square in screen_model.current_piece.squares:
         if square.coordy +1 >= screen_model.hauteur:
-            screen_model.spawnPiece()
             collision = True
 
     if collision == False:
         screen_model.makePieceFall()
+    else:
+        screen_model.spawnPiece()
+
 
 def on_render(pygame, screen, screen_model):
     screen.fill(pygame.Color(255,255,255))
@@ -62,7 +63,8 @@ def main():
 
     # main loop
     while running:
-        pygame.time.delay(500)
+        print(screen_model.current_piece)
+        pygame.time.delay(350)
         on_event(pygame, running, screen_model)
         on_loop(pygame, screen_model)
         on_render(pygame, screen, screen_model)
