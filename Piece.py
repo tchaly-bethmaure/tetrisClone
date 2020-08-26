@@ -60,62 +60,84 @@ class Piece:
         self.coordx = 0
         self.coordy = 0
         self.squares = [] # list Square with coord associated for making the piece
+        self.color = None
         self.nextRotationVecForPiece = self.vecRotation[self.id]
         if id == 1: # line
-            self.squares.append(Square(0,0,1))
-            self.squares.append(Square(0,1,0))
-            self.squares.append(Square(0,2,0))
-            self.squares.append(Square(0,3,0))
+            self.squares.append(Square(0,0,1,self))
+            self.squares.append(Square(0,1,0,self))
+            self.squares.append(Square(0,2,0,self))
+            self.squares.append(Square(0,3,0,self))
+            self.color = (66, 221, 245)
         elif id == 2: # S
-            self.squares.append(Square(0,1,0))
-            self.squares.append(Square(1,1,0))
-            self.squares.append(Square(1,0,1))
-            self.squares.append(Square(2,0,0))
+            self.squares.append(Square(0,1,0,self))
+            self.squares.append(Square(1,1,0,self))
+            self.squares.append(Square(1,0,1,self))
+            self.squares.append(Square(2,0,0,self))
+            self.color = (72, 245, 66)
         elif id == 3: # S inverse
-            self.squares.append(Square(0,0,0))
-            self.squares.append(Square(1,0,1))
-            self.squares.append(Square(1,1,0))
-            self.squares.append(Square(2,1,0))
+            self.squares.append(Square(0,0,0,self))
+            self.squares.append(Square(1,0,1,self))
+            self.squares.append(Square(1,1,0,self))
+            self.squares.append(Square(2,1,0,self))
+            self.color = (245, 66, 66)
         elif id == 5: # L inverse
-            self.squares.append(Square(1,0,0))
-            self.squares.append(Square(1,1,0))
-            self.squares.append(Square(1,2,0))
-            self.squares.append(Square(0,2,1))
+            self.squares.append(Square(1,0,0,self))
+            self.squares.append(Square(1,1,0,self))
+            self.squares.append(Square(1,2,0,self))
+            self.squares.append(Square(0,2,1,self))
+            self.color = (245, 147, 66)
         elif id == 4: # L
-            self.squares.append(Square(0,0,0))
-            self.squares.append(Square(0,1,0))
-            self.squares.append(Square(0,2,0))
-            self.squares.append(Square(1,2,1))
+            self.squares.append(Square(0,0,0,self))
+            self.squares.append(Square(0,1,0,self))
+            self.squares.append(Square(0,2,0,self))
+            self.squares.append(Square(1,2,1,self))
+            self.color = (66, 90, 245)
         elif id == 6: # square
-            self.squares.append(Square(0,0,1))
-            self.squares.append(Square(0,1,0))
-            self.squares.append(Square(1,0,0))
-            self.squares.append(Square(1,1,0))
+            self.squares.append(Square(0,0,1,self))
+            self.squares.append(Square(0,1,0,self))
+            self.squares.append(Square(1,0,0,self))
+            self.squares.append(Square(1,1,0,self))
+            self.color = (245, 245, 66)
         elif id == 7: # T
-            self.squares.append(Square(1,0,0))
-            self.squares.append(Square(0,1,0))
-            self.squares.append(Square(1,1,1))
-            self.squares.append(Square(2,1,0))
-
+            self.squares.append(Square(1,0,0,self))
+            self.squares.append(Square(0,1,0,self))
+            self.squares.append(Square(1,1,1,self))
+            self.squares.append(Square(2,1,0,self))
+            self.color = (197, 66, 245)
     def fall(self):
         for square in self.squares:
             square.fall()
 
-    def rotate(self):
-        if self.id not in [6]:
-            i = 0
-            for square in self.squares:
-                square.coordx += self.vecRotation[self.id][i][0]
-                square.coordy += self.vecRotation[self.id][i][1]
-                i += 1
-            #We update the rotation vector for next rotation
-            i=0
-            for coord in self.nextRotationVecForPiece:
-                coordx = coord[0]
-                coordy = coord[1]
-                self.nextRotationVecForPiece[i] = (coordy, -1*coordx)
-                i += 1
+    def rotateSimulation(self, direction):
+        dummyPiece = []
+        if direction == 1:
+            if self.id not in [6]:
+                i = 0
+                for square in self.squares:
+                    dummyPiece.append((square.coordx + self.vecRotation[self.id][i][0], square.coordy + self.vecRotation[self.id][i][1]))
+                    i+=1
+                i=0
+        else:
+            pass
+        return dummyPiece
 
+    def rotate(self, direction):
+        if direction == 1:
+            if self.id not in [6]:
+                i = 0
+                for square in self.squares:
+                    square.coordx += self.vecRotation[self.id][i][0]
+                    square.coordy += self.vecRotation[self.id][i][1]
+                    i += 1
+                #We update the rotation vector for next rotation
+                i=0
+                for coord in self.nextRotationVecForPiece:
+                    coordx = coord[0]
+                    coordy = coord[1]
+                    self.nextRotationVecForPiece[i] = (coordy, -1*coordx)
+                    i += 1
+        else:
+            pass
     def move(self, vector):
         for square in self.squares:
             square.coordx += vector[0]
