@@ -6,7 +6,7 @@ class Square:
         self.spinOrigin = spinOrigin # 1 for yes, 0 for no
         self.piece = piece
 
-    def deleteSquare(self):
+    def delete(self):
         del self
 
     def fall(self):

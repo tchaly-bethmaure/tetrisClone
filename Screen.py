@@ -57,3 +57,17 @@ class Screen:
 
     def makePieceFall(self):
         self.current_piece.fall()
+
+    def getAllSquareOnLineNumber(self, lineNumber):
+        squaresCoordXOnLine = []
+        for piece in self.pieces:
+            for square in piece.squares:
+                if square.coordy == lineNumber:
+                    squaresCoordXOnLine.append(square.coordx)
+        return squaresCoordXOnLine
+
+    def deleteSquare(self, squareToDeleteCoordx, squareToDeleteCoordy):
+        for piece in self.pieces:
+            for square in piece.squares:
+                if square.coordx == squareToDeleteCoordx and square.coordy == squareToDeleteCoordy:
+                    del piece.squares[piece.squares.index(square)]
