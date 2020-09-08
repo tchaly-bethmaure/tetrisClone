@@ -129,13 +129,16 @@ def on_loop(pygame, screen_model, score):
             chainDelete = []
             for lineNumber in linesToDelete:
                 if len(linesToDelete) > 1:
+                    # line is a part of a block of lines
                     if prevLineNumber != None and prevLineNumber + 1 == lineNumber:
                         chainDelete.append(lineNumber)
+                    # line is not a part of a block of lines
                     elif prevLineNumber != None and prevLineNumber +1 != lineNumber:
-                        chainDelete.append(lineNumber)
-                        linesToDeleteChained.append(sorted(chainDelete))
+                        linesToDeleteChained.append(sorted(chainDelete)) # we save the lines block
                         chainDelete = []
+                        chainDelete.append(lineNumber) # new lines block, current line added
                         prevLineNumber = None
+                    # first line of the block, we store it
                     elif prevLineNumber == None:
                         prevLineNumber = lineNumber
                         chainDelete.append(lineNumber)
@@ -148,9 +151,9 @@ def on_loop(pygame, screen_model, score):
                 for lineNumber in chainOfLineNumber:
                     for squareCoordx in screen_model.getAllSquareOnLineNumber(lineNumber):
                         screen_model.deleteSquare(squareCoordx, lineNumber)
-                    if i == 0:
-                        firstLineNumber = lineNumber
-                    i += 1
+                        if i == 0:
+                            firstLineNumber = lineNumber
+                        i += 1
                 # We make pieces fall.
                 for piece in screen_model.pieces:
                     for square in piece.squares:
