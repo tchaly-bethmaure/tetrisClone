@@ -9,9 +9,10 @@
 # 7;T
 from Square import Square
 import math
+import copy
 
 class Piece:
-    def __init__(self, id):
+    def __init__(self, id, code):
         self.vecRotation = {
             1:[
                 (0,0),
@@ -57,6 +58,7 @@ class Piece:
             ]
         }
         self.id = id
+        self.code = code
         self.coordx = 0
         self.coordy = 0
         self.squares = [] # list Square with coord associated for making the piece
@@ -108,36 +110,31 @@ class Piece:
         for square in self.squares:
             square.fall()
 
-    def rotateSimulation(self, direction):
-        dummyPiece = []
-        if direction == 1:
-            if self.id not in [6]:
-                i = 0
-                for square in self.squares:
-                    dummyPiece.append((square.coordx + self.vecRotation[self.id][i][0], square.coordy + self.vecRotation[self.id][i][1]))
-                    i+=1
-                i=0
-        else:
-            pass
-        return dummyPiece
-
     def rotate(self, direction):
-        if direction == 1:
-            if self.id not in [6]:
-                i = 0
-                for square in self.squares:
-                    square.coordx += self.vecRotation[self.id][i][0]
-                    square.coordy += self.vecRotation[self.id][i][1]
-                    i += 1
-                #We update the rotation vector for next rotation
-                i=0
-                for coord in self.nextRotationVecForPiece:
-                    coordx = coord[0]
-                    coordy = coord[1]
-                    self.nextRotationVecForPiece[i] = (coordy, -1*coordx)
-                    i += 1
-        else:
-            pass
+        if self.id not in [6]:
+            i = 0
+            for square in self.squares:
+                square.coordx += self.vecRotation[self.id][i][0]
+                square.coordy += self.vecRotation[self.id][i][1]
+                i += 1
+            #We update the rotation vector for next rotation
+            i=0
+            for coord in self.nextRotationVecForPiece:
+                coordx = coord[0]
+                coordy = coord[1]
+                self.nextRotationVecForPiece[i] = (coordy, -1*coordx)
+                i += 1
+
+    def rotationSimulation(self):
+        dummyPieceToRotate = copy.deepcopy(self)
+        if self.id not in [6]:
+            i = 0
+            for square in dummyPieceToRotate.squares:
+                square.coordx += self.vecRotation[self.id][i][0]
+                square.coordy += self.vecRotation[self.id][i][1]
+                i += 1
+        return dummyPieceToRotate
+
     def move(self, vector):
         for square in self.squares:
             square.coordx += vector[0]

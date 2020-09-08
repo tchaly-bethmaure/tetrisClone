@@ -6,6 +6,50 @@ from Square import Square
 from Score import Score
 from pygame.locals import *
 
+def collisionWhileFalling(screen_model):
+    collision = False
+    # is current controlled piece touch other pieces ?
+    for piece in screen_model.pieces:
+        if piece != screen_model.current_piece:
+            for square in piece.squares:
+                for current_square in screen_model.current_piece.squares:
+                    if current_square.coordy +1 == square.coordy and current_square.coordx == square.coordx:
+                        collision = True # yes
+    # Current controlled piece touch the ground
+    for square in screen_model.current_piece.squares:
+        if square.coordy +1 >= screen_model.hauteur:
+            collision = True
+    return collision
+
+def detectPieceCollisionWhileMoving(screen_model, moveDirection):
+    cantMove = False
+    # Wall collision
+    for square in screen_model.current_piece.squares:
+        if moveDirection == -1:
+            if square.coordx -1 < 0:
+                cantMove = True
+        else:
+            if square.coordx +1 > screen_model.largeur -1:
+                cantMove = True
+    # Piece collision
+    for square in screen_model.current_piece.squares:
+        for piece in screen_model.pieces:
+            if piece != screen_model.current_piece:
+                for squareOfScreenModele in piece.squares:
+                        if moveDirection == -1 and square.coordx -1 == squareOfScreenModele.coordx and square.coordy == squareOfScreenModele.coordy:
+                            cantMove = True
+                        elif moveDirection == 1 and square.coordx +1 == squareOfScreenModele.coordx and square.coordy == squareOfScreenModele.coordy:
+                            cantMove = True
+    return cantMove
+
+def detectRotationCollision(screen_model):
+    collision = False
+    currentPieceRotated = screen_model.current_piece.rotationSimulation()
+    for square in currentPieceRotated.squares:
+        if square.coordx < 0 or square.coordx > screen_model.largeur -1:
+            collision = True
+    return (collision or screen_model.detectPieceCollision(currentPieceRotated))
+
 def uniqueList(list):
     uniqueList = []
     for x in list:
@@ -29,51 +73,38 @@ def on_event(pygame, running, screen_model, score):
             pygame.midi.quit()
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT:
-                cantMove = False
-                for square in screen_model.current_piece.squares:
-                    if square.coordx -1 < 0:
-                        cantMove = True
+                cantMove = detectPieceCollisionWhileMoving(screen_model, -1)
                 if cantMove == False:
                     screen_model.current_piece.move((-1,0))
                     playMidi(pygame, "Move.wav")
                     score.incScore(1)
             elif event.key == pygame.K_RIGHT:
-                cantMove = False
-                for square in screen_model.current_piece.squares:
-                    if square.coordx +1 > screen_model.largeur:
-                        cantMove = True
+                cantMove = detectPieceCollisionWhileMoving(screen_model, 1)
                 if cantMove == False:
                     screen_model.current_piece.move((1,0))
                     playMidi(pygame, "Move.wav")
                     score.incScore(1)
             elif event.key == pygame.K_UP:
-                if rotationMoveAllowed > 0:
+                canRotate = not detectRotationCollision(screen_model)
+                if rotationMoveAllowed > 0 and canRotate:
                     screen_model.makePieceRotate(1)
                     playMidi(pygame, "Rotate.wav")
                     score.incScore(1)
                 rotationMoveAllowed -= 1
             elif event.key == pygame.K_DOWN:
-                if rotationMoveAllowed > 0:
-                    screen_model.makePieceRotate(0)
-                    playMidi(pygame, "Rotate.wav")
-                    score.incScore(1)
-                rotationMoveAllowed -= 1
+                while(collisionWhileFalling(screen_model) == False):
+                    screen_model.makePieceFall()
+                    score.incScore(15)
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_r:
+                screen_model.resetGame()
+                screen_model.spawnPiece()
+                score.resetScore()
 def on_loop(pygame, screen_model, score):
-    collision = False
-    # is current controlled piece touch other pieces ?
-    for piece in screen_model.pieces:
-        if piece != screen_model.current_piece:
-            for square in piece.squares:
-                for current_square in screen_model.current_piece.squares:
-                    if current_square.coordy +1 == square.coordy and current_square.coordx == square.coordx:
-                        collision = True # yes
-    # Current controlled piece touch the ground
-    for square in screen_model.current_piece.squares:
-        if square.coordy +1 >= screen_model.hauteur:
-            collision = True
     # Point count of the loop initialized to 0
     points = 0
 
+    collision = collisionWhileFalling(screen_model)
     if collision == False:
         screen_model.makePieceFall()
         # piece fall : 1point

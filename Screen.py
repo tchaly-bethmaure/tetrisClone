@@ -1,5 +1,6 @@
 from Piece import Piece
 import random
+from datetime import datetime
 
 class Screen:
     def __init__(self):
@@ -9,6 +10,9 @@ class Screen:
         self.pieces = []
         self.current_piece = None
         self.nextPieceToCome = None
+
+    def resetGame(self):
+        self.__init__()
 
     def reinitGrid(self):
         self.grid = []
@@ -24,36 +28,30 @@ class Screen:
             for square in piece.squares:
                 self.grid[square.coordy][square.coordx] = square
 
+    def detectPieceCollision(self, piece):
+            collision = False
+            for pieceScreenModel in self.pieces:
+                if pieceScreenModel.code != piece.code:
+                    for square in piece.squares:
+                        for squareScreenModele in pieceScreenModel.squares:
+                            if square.coordy == squareScreenModele.coordy and square.coordx == squareScreenModele.coordx:
+                                collision = True
+            return collision
+
     def makePieceRotate(self, direction):
-        #dummyPiece = self.current_piece.rotateSimulation(direction)
-        #rotationAllowed = True
-        #for dummySquareTuple in dummyPiece:
-        #    for piece in self.pieces:
-        #        if self.current_piece != piece and :
-        #            for square in piece.squares:
-        #                if dummySquareTuple[0] == square.coordx or dummySquareTuple[1] == square.coordy:
-        #                    #can't rotate
-        #                    rotationAllowed = False
-        #                    print("Not Allowed : "+str(dummySquareTuple)+" crossing "+str((square.coordx,square.coordy)))
-        #if rotationAllowed == True:
+        pieceRotated = self.current_piece.rotationSimulation()
         self.current_piece.rotate(direction)
 
     def spawnPiece(self):
         p = None
         if self.nextPieceToCome == None:
-            p = Piece(random.randint(1,7))
+            p = Piece(random.randint(1,7), datetime.timestamp(datetime.now()))
         else:
             p = self.nextPieceToCome
-        self.nextPieceToCome = Piece(random.randint(1,7))
-        p.move((4,4))
+        self.nextPieceToCome = Piece(random.randint(1,7), datetime.timestamp(datetime.now()))
+        p.move((4,0))
         self.pieces.append(p)
         self.current_piece = p
-
-    #for debug : def spawnPieceWithId(self, id):
-    #    p = Piece(id)
-    #    p.move((4,4))
-    #    self.pieces.append(p)
-    #    return p
 
     def makePieceFall(self):
         self.current_piece.fall()
