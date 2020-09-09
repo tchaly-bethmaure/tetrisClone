@@ -65,47 +65,48 @@ class Piece:
         self.color = None
         self.nextRotationVecForPiece = self.vecRotation[self.id]
         if id == 1: # line
+            self.color = (66, 221, 245)
             self.squares.append(Square(0,0,1,self))
             self.squares.append(Square(0,1,0,self))
             self.squares.append(Square(0,2,0,self))
             self.squares.append(Square(0,3,0,self))
-            self.color = (66, 221, 245)
+
         elif id == 2: # S
+            self.color = (72, 245, 66)
             self.squares.append(Square(0,1,0,self))
             self.squares.append(Square(1,1,0,self))
             self.squares.append(Square(1,0,1,self))
             self.squares.append(Square(2,0,0,self))
-            self.color = (72, 245, 66)
         elif id == 3: # S inverse
+            self.color = (245, 66, 66)
             self.squares.append(Square(0,0,0,self))
             self.squares.append(Square(1,0,1,self))
             self.squares.append(Square(1,1,0,self))
             self.squares.append(Square(2,1,0,self))
-            self.color = (245, 66, 66)
         elif id == 5: # L inverse
+            self.color = (245, 147, 66)
             self.squares.append(Square(1,0,0,self))
             self.squares.append(Square(1,1,0,self))
             self.squares.append(Square(1,2,0,self))
             self.squares.append(Square(0,2,1,self))
-            self.color = (245, 147, 66)
         elif id == 4: # L
+            self.color = (66, 90, 245)
             self.squares.append(Square(0,0,0,self))
             self.squares.append(Square(0,1,0,self))
             self.squares.append(Square(0,2,0,self))
             self.squares.append(Square(1,2,1,self))
-            self.color = (66, 90, 245)
         elif id == 6: # square
+            self.color = (245, 245, 66)
             self.squares.append(Square(0,0,1,self))
             self.squares.append(Square(0,1,0,self))
             self.squares.append(Square(1,0,0,self))
             self.squares.append(Square(1,1,0,self))
-            self.color = (245, 245, 66)
         elif id == 7: # T
+            self.color = (197, 66, 245)
             self.squares.append(Square(1,0,0,self))
             self.squares.append(Square(0,1,0,self))
             self.squares.append(Square(1,1,1,self))
-            self.squares.append(Square(2,1,0,self))
-            self.color = (197, 66, 245)
+            self.squares.append(Square(2,1,0,self))    
     def fall(self):
         for square in self.squares:
             square.fall()

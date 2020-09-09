@@ -26,7 +26,7 @@ class Screen:
         self.reinitGrid()
         for piece in self.pieces:
             for square in piece.squares:
-                self.grid[square.coordy][square.coordx] = square
+                self.grid[square.coordy][square.coordx] = 1
 
     def detectPieceCollision(self, piece):
             collision = False

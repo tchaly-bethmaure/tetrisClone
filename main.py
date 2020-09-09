@@ -112,6 +112,7 @@ def on_loop(pygame, screen_model, score):
     else:
         # Do we have scored lines
         screen_model.calcGrid()
+
         linesToDelete = []
         for square in screen_model.current_piece.squares:
             squaresToDelete = 0
@@ -123,27 +124,34 @@ def on_loop(pygame, screen_model, score):
                 linesToDelete.append(square.coordy)
         if len(linesToDelete) > 0:
             linesToDelete = sorted(uniqueList(linesToDelete))
+            print(linesToDelete)
             # We count lines player did.
             linesToDeleteChained = []
             prevLineNumber = None
             chainDelete = []
+            countLine = 0
             for lineNumber in linesToDelete:
                 if len(linesToDelete) > 1:
                     # line is a part of a block of lines
-                    if prevLineNumber != None and prevLineNumber + 1 == lineNumber:
+                    if prevLineNumber != None and prevLineNumber +1 == lineNumber:
                         chainDelete.append(lineNumber)
+                        prevLineNumber = lineNumber
+                        if len(linesToDelete) == countLine +1:
+                            linesToDeleteChained.append(sorted(chainDelete))
                     # line is not a part of a block of lines
                     elif prevLineNumber != None and prevLineNumber +1 != lineNumber:
                         linesToDeleteChained.append(sorted(chainDelete)) # we save the lines block
                         chainDelete = []
                         chainDelete.append(lineNumber) # new lines block, current line added
-                        prevLineNumber = None
+                        prevLineNumber = lineNumber
                     # first line of the block, we store it
                     elif prevLineNumber == None:
                         prevLineNumber = lineNumber
                         chainDelete.append(lineNumber)
+                    countLine += 1
                 else:
                     linesToDeleteChained.append([lineNumber])
+            print(linesToDeleteChained)
             # Deletion of lines.
             for chainOfLineNumber in linesToDeleteChained:
                 firstLineNumber = None
@@ -176,7 +184,7 @@ def on_render(pygame, screen, screen_model, score):
 
     for piece in screen_model.pieces:
         for square in piece.squares:
-            pygame.draw.rect(screen, piece.color, (square.coordx*(19),square.coordy*(19),20,20))
+            pygame.draw.rect(screen, square.color, (square.coordx*(19),square.coordy*(19),20,20))
     for square in screen_model.nextPieceToCome.squares:
         pygame.draw.rect(screen, screen_model.nextPieceToCome.color, ((screen_model.largeur+5+square.coordx)*(19),(int(screen_model.hauteur/2)+square.coordy)*(19),20,20))
     font = pygame.font.SysFont(None, 24)
